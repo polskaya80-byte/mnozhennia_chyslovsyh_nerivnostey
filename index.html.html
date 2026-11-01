@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER-MATH: Протокол Нерівностей</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050510;
+            --neon-green: #39ff14;
+            --neon-red: #ff003c;
+            --neon-cyan: #00ffff;
+            --neon-purple: #b026ff;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: #e0e0e0;
+            font-family: 'Share Tech Mono', monospace;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        h1, h2, h3, .orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Neon Text Utilities */
+        .text-cyan-neon {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan);
+        }
+        .text-green-neon {
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green);
+        }
+        .text-red-neon {
+            color: var(--neon-red);
+            text-shadow: 0 0 5px var(--neon-red), 0 0 10px var(--neon-red);
+        }
+        .text-purple-neon {
+            color: var(--neon-purple);
+            text-shadow: 0 0 5px var(--neon-purple), 0 0 15px var(--neon-purple);
+        }
+
+        /* Cyberpunk Container */
+        .cyber-box {
+            background: rgba(10, 10, 20, 0.8);
+            border: 1px solid var(--neon-cyan);
+            box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.2), 0 0 10px rgba(0, 255, 255, 0.2);
+            position: relative;
+        }
+        .cyber-box::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; width: 20px; height: 20px;
+            border-top: 2px solid var(--neon-cyan);
+            border-left: 2px solid var(--neon-cyan);
+        }
+        .cyber-box::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; right: -2px; width: 20px; height: 20px;
+            border-bottom: 2px solid var(--neon-cyan);
+            border-right: 2px solid var(--neon-cyan);
+        }
+
+        /* Buttons */
+        .cyber-btn {
+            background: transparent;
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan);
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        .cyber-btn:hover:not(:disabled) {
+            background: var(--neon-cyan);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px var(--neon-cyan);
+            cursor: pointer;
+        }
+        .cyber-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #555;
+            color: #555;
+        }
+        
+        .cyber-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #555;
+            color: var(--neon-green);
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .cyber-input:focus {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+        }
+
+        /* Feedback animations */
+        @keyframes glitch-red {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+        .error-glitch {
+            animation: glitch-red 0.3s ease-in-out;
+            border-color: var(--neon-red) !important;
+            box-shadow: inset 0 0 15px rgba(255, 0, 60, 0.4), 0 0 15px rgba(255, 0, 60, 0.4) !important;
+        }
+        .success-glow {
+            border-color: var(--neon-green) !important;
+            box-shadow: inset 0 0 15px rgba(57, 255, 20, 0.4), 0 0 15px rgba(57, 255, 20, 0.4) !important;
+        }
+
+        /* Utilities */
+        .hidden-level { display: none; }
+        .math-font { font-family: 'Courier New', Courier, monospace; font-weight: bold; letter-spacing: 1px;}
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen flex flex-col items-center">
+
+    <!-- Header -->
+    <header class="w-full max-w-4xl text-center mb-10">
+        <h1 class="text-3xl md:text-5xl font-bold text-cyan-neon mb-2">CYBER-MATH: ПРОТОКОЛ "НЕРІВНОСТІ"</h1>
+        <p class="text-lg text-gray-400">Авторизація... <span class="text-green-neon">Успішно.</span> Вітаю в системі, кібер-бро.</p>
+    </header>
+
+    <!-- Intro / Theory -->
+    <main class="w-full max-w-4xl space-y-8">
+        
+        <section class="cyber-box p-6 rounded-sm">
+            <h2 class="text-2xl text-purple-neon mb-4">>>> БРИФІНГ ВІД СИСТЕМИ</h2>
+            <p class="mb-3">Щоб зламати код і працювати з числовими нерівностями, тобі потрібні два чіти (лайфхаки). Запам'ятай їх, інакше система видасть фатальну помилку.</p>
+            
+            <div class="bg-black/50 p-4 border-l-4 border-cyan-400 mb-4">
+                <h3 class="text-cyan-400 text-xl mb-1">Лайфхак 1: ВІРУС-МІНУС 🦠🔄</h3>
+                <p><strong>Правило:</strong> Якщо множиш або ділиш нерівність на <strong>додатне</strong> число — все ок, знак залишається. АЛЕ! Якщо множиш на <strong>ВІД'ЄМНЕ</strong> число (вірус-мінус), він ламає систему і <span class="text-red-neon">РОЗВЕРТАЄ ЗНАК НА 180°</span> (було <b>&lt;</b>, стало <b>&gt;</b>).</p>
+                <p class="mt-2 text-sm text-gray-400"><em>Приклад:</em> <span class="math-font text-white">x > 3 | · (-2)  ➔  -2x < -6</span> (Знак перевернувся!)</p>
+            </div>
+
+            <div class="bg-black/50 p-4 border-l-4 border-green-400">
+                <h3 class="text-green-400 text-xl mb-1">Лайфхак 2: ТІЛЬКИ СВІТЛА ЗОНА ☀️</h3>
+                <p><strong>Правило:</strong> Множити дві різні нерівності (ліву частину на ліву, праву на праву) можна <strong>ТІЛЬКИ</strong> якщо всі числа в них <strong>ДОДАТНІ</strong>. З від'ємними це правило не працює і видає баг!</p>
+                <p class="mt-2 text-sm text-gray-400"><em>Приклад:</em> <span class="math-font text-white">2 < a < 5</span> та <span class="math-font text-white">3 < b < 4</span> ➔ <span class="math-font text-white">6 < ab < 20</span> (Все чітко, бо всі числа > 0).</p>
+            </div>
+        </section>
+
+        <!-- LEVEL 1 -->
+        <section id="level-1" class="cyber-box p-6 rounded-sm">
+            <div class="flex justify-between items-center mb-6 border-b border-cyan-800 pb-2">
+                <h2 class="text-2xl text-cyan-neon">РІВЕНЬ 1: ТЕСТ АНТИВІРУСУ</h2>
+                <span class="text-sm text-gray-400">Прогрес: <span id="progress-1" class="text-green-neon">0</span>/6</span>
+            </div>
+            <p class="mb-4 text-gray-300">Обери правильний результат після множення. Пам'ятай про Вірус-Мінус!</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="tasks-lvl-1">
+                <!-- Tasks will be injected here by JS -->
+            </div>
+        </section>
+
+        <!-- LEVEL 2 -->
+        <section id="level-2" class="cyber-box p-6 rounded-sm opacity-50 pointer-events-none transition-all duration-500 relative">
+            <div id="lock-2" class="absolute inset-0 bg-black/70 flex items-center justify-center z-10">
+                <span class="text-2xl text-red-neon orbitron">>>> ДОСТУП ЗАКРИТО (Завершіть Рівень 1)</span>
+            </div>
+            
+            <div class="flex justify-between items-center mb-6 border-b border-cyan-800 pb-2">
+                <h2 class="text-2xl text-green-neon">РІВЕНЬ 2: ЗЛИТТЯ ДАНИХ</h2>
+                <span class="text-sm text-gray-400">Прогрес: <span id="progress-2" class="text-green-neon">0</span>/6</span>
+            </div>
+            <p class="mb-4 text-gray-300">Перемнож дві нерівності. Введи межі нового діапазону. (Працюємо в Світлій Зоні ☀️)</p>
+
+            <div class="grid grid-cols-1 gap-6" id="tasks-lvl-2">
+                 <!-- Tasks injected by JS -->
+            </div>
+        </section>
+
+        <!-- LEVEL 3 -->
+        <section id="level-3" class="cyber-box p-6 rounded-sm opacity-50 pointer-events-none transition-all duration-500 relative">
+            <div id="lock-3" class="absolute inset-0 bg-black/70 flex items-center justify-center z-10">
+                <span class="text-2xl text-red-neon orbitron">>>> ДОСТУП ЗАКРИТО (Завершіть Рівень 2)</span>
+            </div>
+            
+            <div class="flex justify-between items-center mb-6 border-b border-cyan-800 pb-2">
+                <h2 class="text-2xl text-purple-neon">РІВЕНЬ 3: БОС-ФАЙТ (Ручне введення)</h2>
+                <span class="text-sm text-gray-400">Прогрес: <span id="progress-3" class="text-green-neon">0</span>/6</span>
+            </div>
+            <p class="mb-4 text-gray-300">Система збоїть! Доведеться вводити команди вручну. 
+                <br><span class="text-xs text-yellow-400">Підказка: Використовуй англійські літери (x, y, a, b). Якщо треба ввести "менше або дорівнює", пиши <b>&lt;=</b>, для "більше або дорівнює" <b>&gt;=</b>. Пробіли не мають значення.</span>
+            </p>
+
+            <div class="grid grid-cols-1 gap-6" id="tasks-lvl-3">
+                 <!-- Tasks injected by JS -->
+            </div>
+        </section>
+        
+        <!-- Victory Message -->
+        <div id="victory-screen" class="hidden-level text-center py-10">
+            <h1 class="text-5xl text-green-neon orbitron mb-4">SYSTEM HACKED SUCCESSFULLY</h1>
+            <p class="text-xl">Вітаю, Нетраннере! Ти опанував протокол числових нерівностей на 100%.</p>
+        </div>
+
+    </main>
+
+    <script>
+        // --- DATA FOR LEVEL 1 (Multiple Choice) ---
+        const lvl1Data = [
+            {
+                id: '1-1',
+                question: 'Маємо <span class="math-font text-cyan-300">x > 4</span>. Множимо обидві частини на <span class="math-font text-green-400">3</span>.',
+                options: ['3x > 12', '3x < 12', 'x > 12'],
+                correctIdx: 0,
+                wrongMsg: 'Помилка! Ми множимо на додатне число (3). Знак змінювати НЕ треба.'
+            },
+            {
+                id: '1-2',
+                question: 'Маємо <span class="math-font text-cyan-300">y < 5</span>. Множимо на <span class="math-font text-red-400">-2</span> (Вірус-Мінус!).',
+                options: ['-2y < -10', '-2y > -10', '2y > 10'],
+                correctIdx: 1,
+                wrongMsg: 'Агов! Вірус-Мінус атакує! Ти забув перевернути знак < на >.'
+            },
+            {
+                id: '1-3',
+                question: 'Нерівність <span class="math-font text-cyan-300">a ≥ -3</span>. Множимо на <span class="math-font text-green-400">2</span>.',
+                options: ['2a ≥ -6', '2a ≤ -6', '2a ≥ 6'],
+                correctIdx: 0,
+                wrongMsg: 'Двійка — число додатне. Воно просто множить числа, знак залишається на місці.'
+            },
+            {
+                id: '1-4',
+                question: 'Нерівність <span class="math-font text-cyan-300">b ≤ 4</span>. Множимо на <span class="math-font text-red-400">-1</span>.',
+                options: ['-b ≤ -4', '-b ≥ 4', '-b ≥ -4'],
+                correctIdx: 2,
+                wrongMsg: 'Мінус один перевертає і знаки чисел, І ЗНАК НЕРІВНОСТІ! ≤ стає ≥.'
+            },
+            {
+                id: '1-5',
+                question: 'Маємо <span class="math-font text-cyan-300">-x > -8</span>. Ділимо на <span class="math-font text-red-400">-1</span> (щоб знайти x).',
+                options: ['x > 8', 'x < 8', 'x < -8'],
+                correctIdx: 1,
+                wrongMsg: 'Ділення на від\'ємне працює так само, як і множення. Крути знак!'
+            },
+            {
+                id: '1-6',
+                question: 'Маємо <span class="math-font text-cyan-300">-3y ≤ 15</span>. Ділимо на <span class="math-font text-red-400">-3</span>.',
+                options: ['y ≤ -5', 'y ≥ -5', 'y ≥ 5'],
+                correctIdx: 1,
+                wrongMsg: 'Критична помилка! -3y / -3 = y, 15 / -3 = -5. І знак перевертаємо на ≥.'
+            }
+        ];
+
+        // --- DATA FOR LEVEL 2 (Dual Input) ---
+        const lvl2Data = [
+            { id: '2-1', q1: '2 < x < 5', q2: '3 < y < 4', var: 'xy', ans1: '6', ans2: '20' },
+            { id: '2-2', q1: '1 < a < 6', q2: '2 < b < 3', var: 'ab', ans1: '2', ans2: '18' },
+            { id: '2-3', q1: '4 < m < 7', q2: '1 < n < 5', var: 'mn', ans1: '4', ans2: '35' },
+            { id: '2-4', q1: '0.5 < x < 2', q2: '4 < y < 10', var: 'xy', ans1: '2', ans2: '20' },
+            { id: '2-5', q1: '10 < p < 12', q2: '0.1 < q < 0.5', var: 'pq', ans1: '1', ans2: '6' },
+            { id: '2-6', q1: '3 ≤ c ≤ 8', q2: '2 ≤ d ≤ 5', var: 'cd', ans1: '6', ans2: '40', isLte: true }
+        ];
+
+        // --- DATA FOR LEVEL 3 (String Input) ---
+        const lvl3Data = [
+            {
+                id: '3-1', type: 'input',
+                question: 'Нерівність <span class="math-font text-cyan-300">x > 7</span> помножили на <span class="math-font text-red-400">-2</span>. Введи повний результат (напр. -2x<10):',
+                ans: ['-2x<-14'],
+                wrongMsg: 'Згадай: 7 * (-2) = -14, і Вірус-Мінус перевертає > на < !'
+            },
+            {
+                id: '3-2', type: 'mcq',
+                question: 'Чи можна перемножити <span class="math-font text-red-300">-2 < x < -1</span> та <span class="math-font text-red-300">-4 < y < -3</span> за звичайним правилом?',
+                options: ['ТАК', 'НІ'], correctIdx: 1,
+                wrongMsg: 'Згадай Лайфхак 2: множити нерівності можна ТІЛЬКИ якщо всі числа додатні (Світла Зона)!'
+            },
+            {
+                id: '3-3', type: 'input',
+                question: 'Дано <span class="math-font text-cyan-300">5 > x</span>. Множимо на <span class="math-font text-red-400">-3</span>. Вийде <span class="math-font text-white">-15 [?] -3x</span>. Який знак буде замість [?]? Введи < або > :',
+                ans: ['<'],
+                wrongMsg: 'Був знак >. Помножили на мінус. Знак розвертається на <.'
+            },
+            {
+                id: '3-4', type: 'input',
+                question: 'Маємо <span class="math-font text-cyan-300">-3x < 12</span>. Знайди x (введи у форматі x>1 або x<1):',
+                ans: ['x>-4'],
+                wrongMsg: 'Ділимо на -3. 12 / (-3) = -4. І обов\'язково крутимо знак!'
+            },
+            {
+                id: '3-5', type: 'input',
+                question: 'Маємо <span class="math-font text-cyan-300">0 ≤ a ≤ 3</span> та <span class="math-font text-cyan-300">0 ≤ b ≤ 2</span>. Яке МАКСИМАЛЬНЕ можливе значення добутку ab? (Введи число):',
+                ans: ['6'],
+                wrongMsg: 'Просто перемнож праві (найбільші) межі: 3 * 2.'
+            },
+            {
+                id: '3-6', type: 'input',
+                question: 'Секретний хак: якщо <span class="math-font text-cyan-300">-x ≥ -10</span>, то <span class="math-font text-green-300">x [?] 10</span>. Введи правильний знак (використовуй <= або >=):',
+                ans: ['<=', '=<'],
+                wrongMsg: 'Ділимо на -1. ≥ перевертається на ≤. Введи <='
+            }
+        ];
+
+        // --- GLOBAL STATE ---
+        let progress = { lvl1: 0, lvl2: 0, lvl3: 0 };
+
+        // --- HELPER: Clean Text Input ---
+        function cleanString(str) {
+            return str.toLowerCase()
+                .replace(/\s+/g, '') // remove spaces
+                .replace(/х/g, 'x')  // cyrillic to latin homoglyphs
+                .replace(/а/g, 'a')
+                .replace(/с/g, 'c')
+                .replace(/е/g, 'e')
+                .replace(/у/g, 'y')
+                .replace(/р/g, 'p');
+        }
+
+        // --- UI FEEDBACK FUNCTIONS ---
+        function showFeedback(containerId, isSuccess, msg) {
+            const container = document.getElementById(containerId);
+            const feedbackDiv = container.querySelector('.feedback-msg') || document.createElement('div');
+            feedbackDiv.className = `feedback-msg mt-3 text-sm p-2 border-l-4 font-bold ${isSuccess ? 'text-green-neon border-green-500 bg-green-900/20' : 'text-red-neon border-red-500 bg-red-900/20'}`;
+            feedbackDiv.innerHTML = isSuccess ? '✔ BEEP! ДОСТУП ДОЗВОЛЕНО.' : `✖ SYSTEM ERROR: ${msg}`;
+            
+            if(!container.querySelector('.feedback-msg')) {
+                container.appendChild(feedbackDiv);
+            }
+
+            container.classList.remove('error-glitch', 'success-glow');
+            void container.offsetWidth; // trigger reflow
+            container.classList.add(isSuccess ? 'success-glow' : 'error-glitch');
+        }
+
+        function disableContainer(containerId) {
+            const container = document.getElementById(containerId);
+            const inputs = container.querySelectorAll('input, button');
+            inputs.forEach(el => el.disabled = true);
+            container.classList.add('opacity-70');
+        }
+
+        function checkLevelUnlock() {
+            if (progress.lvl1 === 6) {
+                document.getElementById('level-2').classList.remove('opacity-50', 'pointer-events-none');
+                document.getElementById('lock-2').classList.add('hidden');
+            }
+            if (progress.lvl2 === 6) {
+                document.getElementById('level-3').classList.remove('opacity-50', 'pointer-events-none');
+                document.getElementById('lock-3').classList.add('hidden');
+            }
+            if (progress.lvl3 === 6) {
+                document.getElementById('victory-screen').classList.remove('hidden-level');
+                document.getElementById('victory-screen').classList.add('block');
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }
+        }
+
+        // --- RENDER LEVEL 1 ---
+        const lvl1Container = document.getElementById('tasks-lvl-1');
+        lvl1Data.forEach((task, index) => {
+            const taskDiv = document.createElement('div');
+            taskDiv.id = `box-${task.id}`;
+            taskDiv.className = 'bg-black/40 p-4 border border-cyan-900/50 rounded';
+            
+            let html = `<p class="mb-3 text-sm">Завдання 1.${index + 1}: ${task.question}</p><div class="flex flex-col gap-2">`;
+            
+            task.options.forEach((opt, optIdx) => {
+                html += `<button class="cyber-btn py-2 px-4 rounded text-left math-font" onclick="handleLvl1('${task.id}', ${optIdx}, ${task.correctIdx}, '${task.wrongMsg}')">${opt}</button>`;
+            });
+            html += `</div>`;
+            taskDiv.innerHTML = html;
+            lvl1Container.appendChild(taskDiv);
+        });
+
+        window.handleLvl1 = function(taskId, selectedIdx, correctIdx, wrongMsg) {
+            const isCorrect = selectedIdx === correctIdx;
+            const containerId = `box-${taskId}`;
+            
+            showFeedback(containerId, isCorrect, wrongMsg);
+            
+            if(isCorrect) {
+                disableContainer(containerId);
+                progress.lvl1++;
+                document.getElementById('progress-1').innerText = progress.lvl1;
+                checkLevelUnlock();
+            }
+        }
+
+        // --- RENDER LEVEL 2 ---
+        const lvl2Container = document.getElementById('tasks-lvl-2');
+        lvl2Data.forEach((task, index) => {
+            const taskDiv = document.createElement('div');
+            taskDiv.id = `box-${task.id}`;
+            taskDiv.className = 'bg-black/40 p-4 border border-cyan-900/50 rounded flex flex-col md:flex-row md:items-center justify-between gap-4';
+            
+            const sign = task.isLte ? '≤' : '<';
+
+            let html = `
+                <div class="flex-1">
+                    <p class="text-xs text-gray-400 mb-1">Системні дані ${index + 1}:</p>
+                    <div class="math-font text-lg text-cyan-300 flex flex-col">
+                        <span>${task.q1}</span>
+                        <span>${task.q2}</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 math-font text-lg flex-1 justify-center">
+                    <input type="text" id="in1-${task.id}" class="cyber-input w-16 text-center py-1 rounded" placeholder="?">
+                    <span class="text-white">${sign} ${task.var} ${sign}</span>
+                    <input type="text" id="in2-${task.id}" class="cyber-input w-16 text-center py-1 rounded" placeholder="?">
+                </div>
+                <div class="flex-none">
+                    <button class="cyber-btn py-2 px-6 rounded font-bold" onclick="handleLvl2('${task.id}', '${task.ans1}', '${task.ans2}')">ЗЛАМАТИ</button>
+                </div>
+            `;
+            taskDiv.innerHTML = html;
+            lvl2Container.appendChild(taskDiv);
+        });
+
+        window.handleLvl2 = function(taskId, ans1, ans2) {
+            const in1 = document.getElementById(`in1-${taskId}`).value.trim();
+            const in2 = document.getElementById(`in2-${taskId}`).value.trim();
+            const containerId = `box-${taskId}`;
+
+            if(in1 === ans1 && in2 === ans2) {
+                showFeedback(containerId, true, '');
+                disableContainer(containerId);
+                progress.lvl2++;
+                document.getElementById('progress-2').innerText = progress.lvl2;
+                checkLevelUnlock();
+            } else {
+                let msg = 'Невірні межі. Перемнож ліві числа між собою, а праві - між собою.';
+                if(in1 === ans2 && in2 === ans1) msg = 'Ти переплутав ліву і праву межі місцями!';
+                if(in1 === '' || in2 === '') msg = 'Введи обидва значення!';
+                showFeedback(containerId, false, msg);
+            }
+        }
+
+        // --- RENDER LEVEL 3 ---
+        const lvl3Container = document.getElementById('tasks-lvl-3');
+        lvl3Data.forEach((task, index) => {
+            const taskDiv = document.createElement('div');
+            taskDiv.id = `box-${task.id}`;
+            taskDiv.className = 'bg-black/40 p-4 border border-cyan-900/50 rounded flex flex-col gap-3';
+            
+            let html = `<p class="text-sm">Завдання 3.${index + 1}: ${task.question}</p>`;
+            
+            if(task.type === 'mcq') {
+                html += `<div class="flex gap-4">`;
+                task.options.forEach((opt, optIdx) => {
+                    html += `<button class="cyber-btn py-2 px-6 rounded font-bold flex-1" onclick="handleLvl3MCQ('${task.id}', ${optIdx}, ${task.correctIdx}, '${task.wrongMsg}')">${opt}</button>`;
+                });
+                html += `</div>`;
+            } else {
+                // Input string
+                html += `
+                    <div class="flex gap-2">
+                        <input type="text" id="in-${task.id}" class="cyber-input flex-1 px-3 py-2 rounded math-font" placeholder="> ввід команди...">
+                        <button class="cyber-btn py-2 px-6 rounded font-bold" onclick="handleLvl3Input('${task.id}', ${JSON.stringify(task.ans).replace(/"/g, "'")}, '${task.wrongMsg}')">ENTER</button>
+                    </div>
+                `;
+            }
+            
+            taskDiv.innerHTML = html;
+            lvl3Container.appendChild(taskDiv);
+        });
+
+        window.handleLvl3MCQ = function(taskId, selectedIdx, correctIdx, wrongMsg) {
+            const isCorrect = selectedIdx === correctIdx;
+            const containerId = `box-${taskId}`;
+            
+            showFeedback(containerId, isCorrect, wrongMsg);
+            if(isCorrect) {
+                disableContainer(containerId);
+                progress.lvl3++;
+                document.getElementById('progress-3').innerText = progress.lvl3;
+                checkLevelUnlock();
+            }
+        }
+
+        window.handleLvl3Input = function(taskId, correctAnsArray, wrongMsg) {
+            const val = document.getElementById(`in-${taskId}`).value;
+            const cleanedVal = cleanString(val);
+            const containerId = `box-${taskId}`;
+            
+            if(cleanedVal === '') {
+                showFeedback(containerId, false, 'Командний рядок порожній!');
+                return;
+            }
+
+            // Check if cleaned input matches any of the accepted answers
+            let isCorrect = false;
+            for(let i=0; i<correctAnsArray.length; i++){
+                if(cleanedVal === cleanString(correctAnsArray[i])) {
+                    isCorrect = true;
+                    break;
+                }
+            }
+
+            showFeedback(containerId, isCorrect, wrongMsg);
+            if(isCorrect) {
+                disableContainer(containerId);
+                progress.lvl3++;
+                document.getElementById('progress-3').innerText = progress.lvl3;
+                checkLevelUnlock();
+            }
+        }
+    </script>
+</body>
+</html>
